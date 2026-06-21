@@ -2634,24 +2634,23 @@ footer {
     justify-content: center;
     align-items: center;
     gap: 5px;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     z-index: 1100;
     border: none !important;
     outline: none !important;
-    background: #2563EB !important;
-    border-radius: 6px;
+    background: transparent !important;
     padding: 0 !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+    box-shadow: none !important;
     appearance: none;
     -webkit-appearance: none;
   }
 
   .nav-toggle span {
     display: block !important;
-    width: 22px !important;
-    height: 2px !important;
-    background-color: #FFFFFF !important;
+    width: 24px !important;
+    height: 3px !important;
+    background-color: #0A2540 !important;
     border-radius: 2px;
     transition: all 0.3s ease;
     transform-origin: center;
