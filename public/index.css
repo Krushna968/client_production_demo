@@ -2616,8 +2616,40 @@ footer {
 
 @media (max-width: 768px) {
   .industries-grid {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 16px;
+  scrollbar-width: none;
+}
+.industries-grid::-webkit-scrollbar {
+  display: none;
+}
+.industry-card {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+}
+.industries-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+.industries-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--border-light);
+  transition: var(--transition-smooth);
+}
+.industries-dot.active {
+  background-color: var(--accent-base);
+  transform: scale(1.2);
+}
+.industries-dots {
+  display: none;
+}
 
   header {
     padding: 10px 0;

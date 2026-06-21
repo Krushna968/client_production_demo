@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initWizard();
   initCalendlyMock();
   initTaskFlowAnimation();
+  initIndustriesCarousel();
   calculateSavings(); // Initial calculator run
 });
 
@@ -70,6 +71,91 @@ window.openQuoteModalAs = function(headingText) {
     modal.addEventListener('transitionend', restoreOnClose);
   }
 };
+
+/* ==========================================================================
+   Industries Section - Mobile Auto-Advancing Carousel
+   ========================================================================== */
+function initIndustriesCarousel() {
+  const grid = document.getElementById('industriesGrid');
+  const dotsContainer = document.getElementById('industriesDots');
+  if (!grid || !dotsContainer) return;
+
+  const dots = dotsContainer.querySelectorAll('.industries-dot');
+  if (!dots.length) return;
+
+  let currentIndex = 0;
+  let autoplayTimer = null;
+  let resumeTimeout = null;
+
+  const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+
+  function updateDots() {
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+  }
+
+  function goToCard(index) {
+    currentIndex = (index + dots.length) % dots.length;
+    grid.scrollTo({ left: currentIndex * grid.offsetWidth, behavior: 'smooth' });
+    updateDots();
+  }
+
+  function startAutoplay() {
+    stopAutoplay();
+    if (!isMobile()) return;
+    autoplayTimer = setInterval(() => goToCard(currentIndex + 1), 3500);
+  }
+
+  function stopAutoplay() {
+    if (autoplayTimer) {
+      clearInterval(autoplayTimer);
+      autoplayTimer = null;
+    }
+  }
+
+  function pauseThenResume() {
+    stopAutoplay();
+    clearTimeout(resumeTimeout);
+    resumeTimeout = setTimeout(() => {
+      if (isMobile()) startAutoplay();
+    }, 4000);
+  }
+
+  // Pause autoplay while the user is actively swiping, resume after a short delay
+  grid.addEventListener('touchstart', () => {
+    stopAutoplay();
+    clearTimeout(resumeTimeout);
+  }, { passive: true });
+
+  grid.addEventListener('touchend', pauseThenResume, { passive: true });
+
+  // Keep dots in sync with manual scroll/swipe position
+  grid.addEventListener('scroll', () => {
+    const newIndex = Math.round(grid.scrollLeft / grid.offsetWidth);
+    if (newIndex !== currentIndex) {
+      currentIndex = newIndex;
+      updateDots();
+    }
+  }, { passive: true });
+
+  // Clicking a dot jumps directly to that card
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      goToCard(parseInt(dot.dataset.index, 10));
+      pauseThenResume();
+    });
+  });
+
+  // Re-evaluate on resize (e.g. orientation change, or resizing dev tools)
+  window.addEventListener('resize', () => {
+    if (isMobile() && !autoplayTimer) {
+      startAutoplay();
+    } else if (!isMobile()) {
+      stopAutoplay();
+    }
+  });
+
+  if (isMobile()) startAutoplay();
+}
 
 /* ==========================================================================
    Header & Mobile Navigation
